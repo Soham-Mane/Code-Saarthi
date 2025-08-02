@@ -1,17 +1,23 @@
 import Editor from '@monaco-editor/react';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import TooltipOverlay from './TooltipOverlay';
+import { processText } from '../features/textSlice';
 
 export default function MonacoEditor() {
   const editorRef = useRef(null);
   const containerRef = useRef(null);
   const [tooltip, setTooltip] = useState(null);
   const [selectionText, setSelectionText] = useState('');
+  const dispatch = useDispatch();
+
+  const wordCount = useSelector((state) => state.text.wordCount);
+  const status = useSelector((state) => state.text.status);
 
   function handleEditorDidMount(editor, monaco) {
     editorRef.current = editor;
 
-    editor.onDidChangeCursorSelection((e) => {
+    editor.onDidChangeCursorSelection(() => {
       const selection = editor.getModel().getValueInRange(editor.getSelection());
       const hasSelection = selection && selection.trim().length > 0;
 
@@ -29,18 +35,20 @@ export default function MonacoEditor() {
           setSelectionText(selection);
           setTooltip({
             x: tooltipX,
-            y: tooltipY
+            y: tooltipY,
           });
         }
       } else {
-        setTooltip(null); // Hide tooltip when selection is cleared
+        setTooltip(null);
       }
     });
   }
 
   function handleTooltipClick() {
-    console.log('🪄 Auto-logged:', selectionText);
-    setTooltip(null); // hide after click
+    if (selectionText.trim()) {
+      dispatch(processText(selectionText));
+    }
+    setTooltip(null);
   }
 
   return (
@@ -51,12 +59,27 @@ export default function MonacoEditor() {
         defaultValue="// Start typing and select some text..."
         onMount={handleEditorDidMount}
       />
+
       {tooltip && (
         <TooltipOverlay
-  top={tooltip.y}  // Slight offset below the text
-  left={tooltip.x}
+          top={tooltip.y}
+          left={tooltip.x}
           onClick={handleTooltipClick}
         />
+      )}
+
+      {status === 'succeeded' && (
+        <div style={{
+          position: 'absolute',
+          bottom: 10,
+          left: 10,
+          backgroundColor: '#f3f3f3',
+          padding: '8px 12px',
+          borderRadius: '6px',
+          boxShadow: '0 2px 5px rgba(0,0,0,0.15)'
+        }}>
+          🧮 Word Count: {wordCount}
+        </div>
       )}
     </div>
   );
