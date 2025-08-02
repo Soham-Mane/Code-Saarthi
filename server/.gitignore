@@ -1,0 +1,11 @@
+.env
+node_modules/
+dist/
+logs/
+*.log
+.DS_Store
+# Ignore environment variables
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
