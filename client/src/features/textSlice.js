@@ -6,6 +6,7 @@ export const processText = createAsyncThunk(
   'text/processText',
   async (text) => {
     const data = await sendTextToBackend(text);
+    console.log('Processed text data:', data);
     return data;
   }
 );
@@ -14,6 +15,7 @@ const textSlice = createSlice({
   name: 'text',
   initialState: {
     wordCount: 0,
+    aiResponse :'',
     status: 'idle',
   },
   reducers: {},
@@ -25,6 +27,7 @@ const textSlice = createSlice({
       .addCase(processText.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.wordCount = action.payload.wordCount;
+        state.aiResponse =action.payload.aiResponse  || '';
       })
       .addCase(processText.rejected, (state) => {
         state.status = 'failed';
