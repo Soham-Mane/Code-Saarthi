@@ -251,18 +251,7 @@ const AIResponseModal = ({ isOpen, onClose, aiResponse, selectedText }) => {
           </button>
         </div>
 
-        <div style={{
-          fontSize: '15px',
-          lineHeight: '1.6',
-          color: '#374151',
-          whiteSpace: 'pre-wrap',
-          backgroundColor: '#f9fafb',
-          padding: '16px',
-          borderRadius: '8px',
-          border: '1px solid #e5e7eb'
-        }}>
-          {aiResponse}
-        </div>
+
       </div>
     </div>
   );
